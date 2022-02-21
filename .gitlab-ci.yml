@@ -1,0 +1,51 @@
+image: ubuntu:21.04
+
+before_script:
+  #- #apk add openssh-client
+  - apt-get update -y && apt-get install openssh-client -y
+  - eval $(ssh-agent -s)
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  #- ssh-keyscan 18.134.242.23 >> ~/.ssh/known_hosts
+  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+  - ls -la ~/.ssh
+  - apt-get update
+  - apt-get install -y postgresql-client netcat dnsutils curl telnet
+
+stages:
+  - test
+
+test:
+  stage: test
+  tags:
+    - otc_run_docker_s
+#    - run_docker
+ #    - otc_run_docker_k8s_s
+  script:
+    - echo "http_proxy = $http_proxy"
+    - echo "https_proxy = $https_proxy"
+    - echo $NO_PROXY
+    - echo $no_proxy
+    - unset NO_PROXY
+    - unset no_proxy
+    - echo $NO_PROXY
+    - echo $no_proxy
+
+   # - echo "no_proxy = $no_proxy"
+   #- nslookup ftth01-postgres-db.coapqerv50jp.eu-west-2.rds.amazonaws.com
+    #- nc -w 5 -z 35.177.96.98 5432
+    #- nc -w 5 -z ftth01-postgres-db.coapqerv50jp.eu-west-2.rds.amazonaws.com 5432
+    #- curl -m 2 ftth01-postgres-db.coapqerv50jp.eu-west-2.rds.amazonaws.com:5432
+    #- telnet ftth01-postgres-db.coapqerv50jp.eu-west-2.rds.amazonaws.com 5432
+    #- echo $?
+    #- psql --version
+    #- export PGPASSWORD='cap2020!'
+    #- psql -h ftth01-postgres-db.coapqerv50jp.eu-west-2.rds.amazonaws.com -p 5432 -d pon -U putuxadmin -c "SELECT * FROM public.databasechangelog"
+    - nc -zv 217.170.177.100 56022
+    #- ssh -v ec2-user@18.134.242.23 -o "ProxyCommand=nc -X connect -x proxy.devops.telekom.de:3128 %h %p"
+    #- ssh -v ec2-user@18.134.242.23 whoami
+    #- nc -zv 35.177.96.98 5432
+#  "dbHost": "ftth01-postgres-db.coapqerv50jp.eu-west-2.rds.amazonaws.com",
+#              "dbPort": 5432,
+#              "dbUser": "putuxadmin",
+#              "dbPassword": "cap2020!"
